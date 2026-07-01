@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Osmosis BHOP - 3D Browser Bunny Hopping</title>
+    
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 3D WebGL Canvas Holder -->
+    <div id="canvas-container"></div>
+
+    <!-- UI Overlay Wrapper -->
+    <div id="ui-wrapper">
+        
+        <!-- 1. HUD Panel -->
+        <div id="hud-panel" class="hud-container hidden">
+            <div class="hud-item speed-card">
+                <span class="label">SPEED</span>
+                <span id="speed-val" class="value font-mono">0.0 u/s</span>
+                <span id="max-speed-val" class="sub-value font-mono">Max: 0.0</span>
+            </div>
+            
+            <div class="hud-item timer-card">
+                <span class="label">TIME</span>
+                <span id="timer-val" class="value font-mono">00:00.00</span>
+            </div>
+            
+            <div class="hud-item lap-card">
+                <span class="label">LAPS</span>
+                <span id="lap-val" class="value font-mono">0</span>
+                <span id="best-lap-val" class="sub-value font-mono">Best: 0</span>
+            </div>
+            
+            <div class="hud-center-text">
+                <div id="feedback-text" class="glow-text">GO!</div>
+                <div id="streak-badge" class="streak-pill hidden">STREAK: <span id="streak-val">0</span></div>
+            </div>
+        </div>
+
+        <!-- 2. Main Menu Panel -->
+        <div id="main-menu-panel" class="overlay-panel">
+            <div class="menu-card glass-panel">
+                <div class="brand-logo">
+                    <div class="outer-ring">
+                        <div class="inner-dot"></div>
+                    </div>
+                    <h1>OSMOSIS BHOP</h1>
+                    <p class="subtitle">CELLULAR BILAYER BUNNY HOPPING</p>
+                </div>
+                
+                <div class="button-group">
+                    <button id="play-btn" class="btn btn-primary btn-glow">PLAY</button>
+                    <button id="settings-btn" class="btn btn-secondary">SETTINGS</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Settings Panel -->
+        <div id="settings-panel" class="overlay-panel hidden">
+            <div class="menu-card glass-panel">
+                <h2>SETTINGS</h2>
+                
+                <div class="settings-group">
+                    <div class="slider-row">
+                        <label for="sensitivity-slider">MOUSE SENSITIVITY</label>
+                        <div class="slider-val-box">
+                            <input type="range" id="sensitivity-slider" min="0.1" max="3.0" step="0.05" value="1.0">
+                            <span id="sensitivity-val" class="slider-label font-mono">1.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="reset-records-btn" class="btn btn-danger">RESET RECORDS</button>
+                    <button id="settings-back-btn" class="btn btn-primary">BACK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Pause Panel -->
+        <div id="pause-panel" class="overlay-panel hidden">
+            <div class="menu-card glass-panel">
+                <h2>PAUSED</h2>
+
+                <div class="settings-group">
+                    <div class="slider-row">
+                        <label for="pause-sensitivity-slider">MOUSE SENSITIVITY</label>
+                        <div class="slider-val-box">
+                            <input type="range" id="pause-sensitivity-slider" min="0.1" max="3.0" step="0.05" value="1.0">
+                            <span id="pause-sensitivity-val" class="slider-label font-mono">1.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="resume-btn" class="btn btn-primary btn-glow">RESUME</button>
+                    <button id="pause-menu-btn" class="btn btn-secondary">MAIN MENU</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Run Stats Panel (Game Over) -->
+        <div id="stats-screen-panel" class="overlay-panel hidden">
+            <div class="menu-card glass-panel stats-card">
+                <div class="stats-logo">
+                    <div class="outer-ring small-ring">
+                        <div class="inner-dot small-dot"></div>
+                    </div>
+                    <h2 id="stats-title">RUN OVER!</h2>
+                </div>
+
+                <table class="stats-table">
+                    <tr>
+                        <td>TIME ELAPSED</td>
+                        <td id="stats-time" class="font-mono text-highlight">00:00.00</td>
+                    </tr>
+                    <tr>
+                        <td>LAPS COMPLETED</td>
+                        <td id="stats-laps" class="font-mono text-highlight">0</td>
+                    </tr>
+                    <tr>
+                        <td>BEST LAPS RECORD</td>
+                        <td id="stats-best" class="font-mono text-muted">0</td>
+                    </tr>
+                    <tr>
+                        <td>PERFECT HOPS STREAK</td>
+                        <td id="stats-streak" class="font-mono text-highlight">0</td>
+                    </tr>
+                </table>
+
+                <div class="button-group">
+                    <button id="retry-btn" class="btn btn-primary btn-glow">RETRY</button>
+                    <button id="stats-menu-btn" class="btn btn-secondary">MAIN MENU</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Three.js WebGL Library CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Game Scripts -->
+    <script src="js/audio.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/level.js"></script>
+    <script src="js/renderer.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
